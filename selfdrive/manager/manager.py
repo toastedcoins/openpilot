@@ -12,19 +12,20 @@ import openpilot.selfdrive.sentry as sentry
 from openpilot.common.params import Params, ParamKeyType
 from openpilot.common.text_window import TextWindow
 from openpilot.selfdrive.boardd.set_time import set_time
-from openpilot.system.hardware import HARDWARE, PC
+from openpilot.selfdrive.configs.get import CONFIG
 from openpilot.selfdrive.manager.helpers import unblock_stdout, write_onroad_params, save_bootlog
 from openpilot.selfdrive.manager.process import ensure_running
-from openpilot.selfdrive.manager.process_config import managed_processes
 from openpilot.selfdrive.athena.registration import register, UNREGISTERED_DONGLE_ID
 from openpilot.common.swaglog import cloudlog, add_file_handler
+from openpilot.system.hardware import HARDWARE, PC
 from openpilot.system.version import is_dirty, get_commit, get_version, get_origin, get_short_branch, \
                            get_normalized_origin, terms_version, training_version, \
                            is_tested_branch, is_release_branch
 
-
+managed_processes = {c.name: c for c in CONFIG.get_services()}
 
 def manager_init() -> None:
+  os.environ.update(CONFIG.get_env())
   # update system time from panda
   set_time(cloudlog)
 
