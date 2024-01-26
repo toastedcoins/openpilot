@@ -14,6 +14,8 @@ class PCConfig(BaseConfig):
     services -= {MICD, SOUNDD}
     return services
 
+  def get_env(self) -> Dict[str, str]:
+    return {}
 
 METADRIVE_BRIDGE = PythonProcess("bridge", "tools.sim.run_bridge", always_run)
 

@@ -21,6 +21,7 @@ TICI = os.path.isfile('/TICI')
 AGNOS = os.path.isfile('/AGNOS')
 TIZI = TICI and not ublox(Params())
 PC = not TICI
+SIM = os.environ.get("SIM", None) is not None
 
 
 if TICI:
