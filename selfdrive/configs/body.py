@@ -8,5 +8,6 @@ from openpilot.selfdrive.manager.process_config import BRIDGE, WEBJOYSTICKD, WEB
 class BodyConfig(ThreexConfig):
   def get_services(self) -> Set[ManagerProcess]:
     return COMMON_SERVICES | {BRIDGE, WEBRTCD, WEBJOYSTICKD}
+
   def get_env(self) -> Dict[str, str]:
     return {}
