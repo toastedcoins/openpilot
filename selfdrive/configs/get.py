@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 from openpilot.selfdrive.configs.base import BaseConfig
 from openpilot.selfdrive.configs.pc import MetaDriveConfig, PCConfig
 from openpilot.selfdrive.configs.three import ThreeConfig
@@ -32,4 +31,4 @@ def get_config():
       raise ValueError("No config available for system hardware")
 
 
-CONFIG: Optional[BaseConfig] = get_config()
+CONFIG: BaseConfig = get_config()
