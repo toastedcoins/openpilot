@@ -29,7 +29,7 @@ def parse_args(add_args=None):
 if __name__ == "__main__":
   args = parse_args()
 
-  q, p = create_bridge()
+  q, p = create_bridge(args.dual_camera, args.high_quality)
 
   if args.joystick:
     # start input poll for joystick
