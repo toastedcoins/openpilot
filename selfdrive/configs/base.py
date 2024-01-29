@@ -9,6 +9,7 @@ from openpilot.selfdrive.manager.process_config import ATHENA, CALIBRATIOND, LOG
 
 
 Processes = Set[ManagerProcess]
+Environment = Dict[str, str]
 
 # services that run on all hardware
 COMMON_SERVICES: Processes = {
@@ -56,9 +57,9 @@ UI_SERVICES: Processes = {
 
 class BaseConfig(abc.ABC):
   @abc.abstractmethod
-  def get_services(self) -> Set[ManagerProcess]:
+  def get_services(self) -> Processes:
     pass
 
   @abc.abstractmethod
-  def get_env(self) -> Dict[str, str]:
+  def get_env(self) -> Environment:
     pass

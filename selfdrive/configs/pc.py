@@ -1,12 +1,11 @@
 import os
-from typing import Dict, Set
-from openpilot.selfdrive.manager.process import ManagerProcess, PythonProcess
-from openpilot.selfdrive.configs.base import COMMON_SERVICES, DMONITORING_SERVICES, UI_SERVICES, BaseConfig, Processes
+from openpilot.selfdrive.manager.process import PythonProcess
+from openpilot.selfdrive.configs.base import COMMON_SERVICES, DMONITORING_SERVICES, UI_SERVICES, BaseConfig, Processes, Environment
 from openpilot.selfdrive.manager.process_config import MAPSD, MICD, SOUNDD, always_run, driverview
 
 
 class PCConfig(BaseConfig):
-  def get_services(self) -> Set[ManagerProcess]:
+  def get_services(self) -> Processes:
     services = COMMON_SERVICES | UI_SERVICES | DMONITORING_SERVICES
     if "MAPBOX_TOKEN" not in os.environ:
       services -= {MAPSD}
@@ -14,7 +13,7 @@ class PCConfig(BaseConfig):
     services -= {MICD, SOUNDD}
     return services
 
-  def get_env(self) -> Dict[str, str]:
+  def get_env(self) -> Environment:
     return {}
 
 
@@ -25,10 +24,10 @@ class MetaDriveConfig(PCConfig):
   def __init__(self):
     super().__init__()
 
-  def get_services(self) -> Set[ManagerProcess]:
+  def get_services(self) -> Processes:
     return (super().get_services() | METADRIVE_SERVICES) - DMONITORING_SERVICES
 
-  def get_env(self) -> Dict[str, str]:
+  def get_env(self) -> Environment:
     return {
       "PASSIVE": "0",
       "NOBOARD": "1",
@@ -41,5 +40,8 @@ class MetaDriveConfig(PCConfig):
 WEBCAM_CAMERAD = PythonProcess("camerad", "tools.webcam.camerad", driverview)
 
 class PCWebcamConfig(PCConfig):
-  def get_services(self) -> Set[ManagerProcess]:
+  def get_services(self) -> Processes:
     return (super().get_services() | {WEBCAM_CAMERAD})
+
+  def get_env(self) -> Environment:
+    return {}
