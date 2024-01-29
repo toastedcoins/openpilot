@@ -2,7 +2,7 @@ import os
 from typing import Dict, Set
 from openpilot.selfdrive.manager.process import ManagerProcess, PythonProcess
 from openpilot.selfdrive.configs.base import COMMON_SERVICES, DMONITORING_SERVICES, UI_SERVICES, BaseConfig, Processes
-from openpilot.selfdrive.manager.process_config import MAPSD, MICD, SOUNDD, always_run
+from openpilot.selfdrive.manager.process_config import MAPSD, MICD, SOUNDD, always_run, driverview
 
 
 class PCConfig(BaseConfig):
@@ -17,8 +17,8 @@ class PCConfig(BaseConfig):
   def get_env(self) -> Dict[str, str]:
     return {}
 
-METADRIVE_BRIDGE = PythonProcess("bridge", "tools.sim.run_bridge", always_run)
 
+METADRIVE_BRIDGE = PythonProcess("bridge", "tools.sim.run_bridge", always_run)
 METADRIVE_SERVICES: Processes = {METADRIVE_BRIDGE}
 
 class MetaDriveConfig(PCConfig):
@@ -36,3 +36,10 @@ class MetaDriveConfig(PCConfig):
       "SKIP_FW_QUERY": "1",
       "FINGERPRINT": "HONDA CIVIC 2016"
     }
+
+
+WEBCAM_CAMERAD = PythonProcess("camerad", "tools.webcam.camerad", driverview)
+
+class PCWebcamConfig(PCConfig):
+  def get_services(self) -> Set[ManagerProcess]:
+    return (super().get_services() | {WEBCAM_CAMERAD})
