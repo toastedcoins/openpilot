@@ -40,7 +40,7 @@ WEBCAM_CAMERAD = PythonProcess("camerad", "tools.webcam.camerad", driverview)
 
 class PCWebcamConfig(PCConfig):
   def get_services(self) -> Processes:
-    return (super().get_services() | {WEBCAM_CAMERAD} | {BOARDD, PANDAD})
+    return (super().get_services() | {WEBCAM_CAMERAD, BOARDD, PANDAD})
 
   def get_env(self) -> Environment:
     return {}
