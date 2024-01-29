@@ -1,16 +1,15 @@
 import os
 from openpilot.selfdrive.manager.process import PythonProcess
-from openpilot.selfdrive.configs.base import COMMON_SERVICES, DMONITORING_SERVICES, UI_SERVICES, BaseConfig, Processes, Environment
-from openpilot.selfdrive.manager.process_config import MAPSD, MICD, SOUNDD, always_run, driverview
+from openpilot.selfdrive.configs.base import CORE_SERVICES, DMONITORING_SERVICES, UI_SERVICES, BaseConfig, Processes, Environment
+from openpilot.selfdrive.manager.process_config import BOARDD, MAPSD, PANDAD, always_run, driverview
 
 
 class PCConfig(BaseConfig):
   def get_services(self) -> Processes:
-    services = COMMON_SERVICES | UI_SERVICES | DMONITORING_SERVICES
+    services = CORE_SERVICES | UI_SERVICES | DMONITORING_SERVICES
     if "MAPBOX_TOKEN" not in os.environ:
       services -= {MAPSD}
 
-    services -= {MICD, SOUNDD}
     return services
 
   def get_env(self) -> Environment:
@@ -41,7 +40,7 @@ WEBCAM_CAMERAD = PythonProcess("camerad", "tools.webcam.camerad", driverview)
 
 class PCWebcamConfig(PCConfig):
   def get_services(self) -> Processes:
-    return (super().get_services() | {WEBCAM_CAMERAD})
+    return (super().get_services() | {WEBCAM_CAMERAD} | {BOARDD, PANDAD})
 
   def get_env(self) -> Environment:
     return {}

@@ -11,10 +11,8 @@ from openpilot.selfdrive.manager.process_config import ATHENA, CALIBRATIOND, LOG
 Processes = Set[ManagerProcess]
 Environment = Dict[str, str]
 
-# services that run on all hardware
-COMMON_SERVICES: Processes = {
-  ATHENA,
-
+# services required for driving
+CORE_SERVICES: Processes = {
   LOGCAT,
   PROCLOG,
 
@@ -25,22 +23,27 @@ COMMON_SERVICES: Processes = {
   CALIBRATIOND,
   TORQUED,
   CONTROLSD,
-  DELETER,
-  NAVD,
   PARAMSD,
   PLANNERD,
   RADARD,
-  TOMBSTONED,
-  UPDATED,
-  UPLOADERD,
-  STATSD,
   THERMALD,
+
+  UPDATED,
 }
 
 LOGGING_SERVICES: Processes = {
   LOGGERD,
   LOGMESSAGED,
   ENCODERD,
+  DELETER,
+  TOMBSTONED,
+  STATSD,
+}
+
+# Services for interacting with the comma api and uploading routes
+COMMA_SERVICES: Processes = {
+  ATHENA,
+  UPLOADERD,
 }
 
 DMONITORING_SERVICES: Processes = {
@@ -52,6 +55,7 @@ UI_SERVICES: Processes = {
   UI,
   SOUNDD,
   MICD,
+  NAVD,
 }
 
 
