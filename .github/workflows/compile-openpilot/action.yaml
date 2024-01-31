@@ -13,9 +13,10 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - id: scons-cache
+    - id: restore-scons-cache
       uses: ./.github/workflows/auto-cache
       with:
+        push: ${{ inputs.push != 'false' }}
         path: .ci_cache/scons_cache
         key: scons-${{ runner.arch }}-${{ env.CACHE_COMMIT_DATE }}-${{ github.sha }}
         restore-keys: |
@@ -28,13 +29,8 @@ runs:
         ${{ env.RUN }} "scons -j$(nproc) ${{ inputs.flags }}"
         ${{ env.RUN }} "release/check-dirty.sh"
     - shell: bash
-      name: Cleanup scons cache and rebuild
+      name: cleanup cache and rebuild for minimizing pushed cache
+      if: ${{ inputs.push != 'false' }}
       run: |
           ${{ env.RUN }} "rm -rf /tmp/scons_cache/* && \
                           scons -j$(nproc) --cache-populate"
-    - name: Save scons cache
-      uses: actions/cache/save@v3
-      if: ${{ inputs.push != 'false' }}
-      with:
-        path: .ci_cache/scons_cache
-        key: scons-${{ runner.arch }}-${{ env.CACHE_COMMIT_DATE }}-${{ github.sha }}
