@@ -1,12 +1,31 @@
 name: 'compile openpilot'
 
+inputs:
+  push:
+    description: 'push scons cache'
+    required: false
+    default: 'false'
+  flags:
+    description: 'additional scons flags'
+    required: false
+    default: ''
+
 runs:
   using: "composite"
   steps:
+    - id: scons-cache
+      uses: ./.github/workflows/auto-cache
+      with:
+        path: .ci_cache/scons_cache
+        key: scons-${{ runner.arch }}-${{ env.CACHE_COMMIT_DATE }}-${{ github.sha }}
+        restore-keys: |
+          scons-${{ runner.arch }}-${{ env.CACHE_COMMIT_DATE }}
+          scons-${{ runner.arch }}
     - shell: bash
-      name: Build openpilot with all flags
+      name: build openpilot with desired flags
+      timeout-minutes: ${{ ((steps.restore-scons-cache.outputs.cache-hit == 'true') && 15 || 30) }} # allow more time when we missed the scons cache
       run: |
-        ${{ env.RUN }} "scons -j$(nproc)"
+        ${{ env.RUN }} "scons -j$(nproc) ${{ inputs.flags }}"
         ${{ env.RUN }} "release/check-dirty.sh"
     - shell: bash
       name: Cleanup scons cache and rebuild
@@ -15,7 +34,7 @@ runs:
                           scons -j$(nproc) --cache-populate"
     - name: Save scons cache
       uses: actions/cache/save@v3
-      if: github.ref == 'refs/heads/master'
+      if: ${{ inputs.push != 'false' }}
       with:
         path: .ci_cache/scons_cache
         key: scons-${{ runner.arch }}-${{ env.CACHE_COMMIT_DATE }}-${{ github.sha }}
